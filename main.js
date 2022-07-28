@@ -4,10 +4,10 @@ menus.forEach((menu) =>
   menu.addEventListener("click", (event) => getNewsByTopic(event))
 );
 
-const getLatestNews = async () => {
-  let url = new URL(
-    `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=10`
-  );
+let searchButton = document.getElementById("searchButton");
+let url;
+
+const getNews = async () => {
   let header = new Headers({
     "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
   });
@@ -15,24 +15,37 @@ const getLatestNews = async () => {
   let response = await fetch(url, { headers: header });
   let data = await response.json();
   news = data.articles;
-  console.log(news);
   render();
+};
+
+const getLatestNews = async () => {
+  url = new URL(
+    `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=10`
+  );
+  getNews();
 };
 
 const getNewsByTopic = async (event) => {
   let topic = event.target.textContent.toLowerCase();
-  let url = new URL(
+  url = new URL(
     `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
   );
-  let header = new Headers({
-    "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
-  });
+  getNews();
+};
 
-  let response = await fetch(url, { headers: header });
-  let data = await response.json();
-  news = data.articles;
-  console.log(news);
-  render();
+const getNewsByKeyword = async () => {
+  //1. 검색 키워드 읽어오기
+  //2. url에 검색 키워드 붙이기
+  //3. 헤더 준비
+  //4. url 부르기
+  //5. 데이터 가져오기
+  //6. 데이터 보여주기
+
+  let keyword = document.getElementById("searchInput").value;
+  url = new URL(
+    `https://api.newscatcherapi.com/v2/search?q=${keyword}&page_size=10`
+  );
+  getNews();
 };
 
 const render = () => {
@@ -60,4 +73,5 @@ const render = () => {
   document.getElementById("newsBoard").innerHTML = newsHTML;
 };
 
+searchButton.addEventListener("click", getNewsByKeyword);
 getLatestNews();
