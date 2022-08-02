@@ -18,8 +18,36 @@
     <title>Document</title>
   </head>
   <body>
+    <div class="sideMenu" id="mySidenav">
+      <button class="closeBtn" onclick="closeNav()">&times;</button>
+      <div class="sideMenuList" id="menuList">
+        <button>Sport</button>
+        <button>Tech</button>
+        <button>World</button>
+        <button>Finance</button>
+        <button>Politics</button>
+        <button>Business</button>
+        <button>Economics</button>
+        <button>Entertainment</button>
+        <button>Beauty</button>
+        <button>Travel</button>
+        <button>Music</button>
+        <button>Food</button>
+        <button>Science</button>
+        <button>Gaming</button>
+        <button>Energy</button>
+      </div>
+    </div>
     <section class="container">
       <section class="headLine">
+        <div>
+          <i class="fa-solid fa-bars hide icon-button" onclick="openNav()"></i>
+          <i class="fas fa-search icon-button" onclick="openSearchBox()"></i>
+          <span id="inputArea">
+            <input type="text" id="searchInput" placeholder="search" />
+            <button class="searchButton" onclick="searchNews()">Go</button>
+          </span>
+        </div>
         <div class="newsImgArea">
           <svg viewBox="0 0 184 25" fill="#000">
             <path
