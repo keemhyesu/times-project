@@ -1,0 +1,37 @@
+.newsImgArea {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.newsImgArea svg {
+  width: 430px;
+}
+
+.menus {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  border-top: 1px solid #e2e2e2;
+  border-bottom: 3px double #000;
+  flex-wrap: wrap;
+}
+
+.menus button {
+  background: none;
+  border: none;
+  margin: 10px;
+}
+
+.menus button:hover {
+  color: coral;
+}
+
+.newsImgSize {
+  max-width: 100%;
+  min-height: 250px;
+}
+
+.news {
+  border-bottom: 1px solid black;
+}
