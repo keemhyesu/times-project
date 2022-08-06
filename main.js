@@ -10,6 +10,31 @@ const getNews = async () => {
   let data = await response.json();
   news = data.articles; // 우리가 보여주려는 데이터는 articles에 있음
   console.log("뉴스", news);
+  render();
+};
+
+const render = () => {
+  let newsHTML = "";
+  newsHTML = news //news array
+    .map((item) => {
+      return `<div class="row news">
+    <div class="col-lg-4">
+      <img
+        class="newsImgSize"
+        src="${item.media}"
+      />
+    </div>
+    <div class="col-lg-8">
+      <h2>${item.title}</h2>
+      <p>${item.summary}</p>
+      <div>${item.published_date} * ${item.rights}</div>
+    </div>
+  </div>
+`;
+    })
+    .join("");
+
+  document.getElementById("newsBoard").innerHTML = newsHTML;
 };
 
 const openNav = () => {
