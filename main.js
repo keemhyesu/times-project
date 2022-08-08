@@ -1,4 +1,9 @@
 let news = []; //articles 뽑아내기 위한 배열
+let menus = document.querySelectorAll(".menus button");
+menus.forEach((menu) =>
+  menu.addEventListener("click", (event) => getNewsByTopic(event))
+);
+
 const getNews = async () => {
   let url = new URL(
     `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=10`
@@ -13,6 +18,23 @@ const getNews = async () => {
   render();
 };
 
+const getNewsByTopic = async (event) => {
+  console.log("클릭됨", event.target.textContent);
+
+  let topic = event.target.textContent.toLowerCase();
+  let url = new URL(
+    `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
+  );
+  let header = new Headers({
+    "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
+  });
+  let response = await fetch(url, { headers: header });
+  let data = await response.json();
+  news = data.articles;
+  console.log("data", news);
+  render();
+};
+
 const render = () => {
   let newsHTML = "";
   newsHTML = news //news array
@@ -21,13 +43,24 @@ const render = () => {
     <div class="col-lg-4">
       <img
         class="newsImgSize"
-        src="${item.media}"
-      />
+        src="${
+          item.media ||
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1280px-No_image_3x4.svg.png"
+        }"
+      / alt="image">
     </div>
     <div class="col-lg-8">
       <h2>${item.title}</h2>
-      <p>${item.summary}</p>
-      <div>${item.published_date} * ${item.rights}</div>
+      <p>${
+        item.summary == null || item.summary == ""
+          ? "내용없음"
+          : item.summary.length > 200
+          ? item.summary.substring(0, 200) + "..."
+          : item.summary
+      }</p>
+      <div>${moment(item.published_date).fromNow()} * ${
+        item.rights || "no source"
+      }</div>
     </div>
   </div>
 `;
