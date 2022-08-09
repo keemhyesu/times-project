@@ -4,6 +4,13 @@ menus.forEach((menu) =>
   menu.addEventListener("click", (event) => getNewsByTopic(event))
 );
 
+let sideMenuList = document.querySelectorAll(".sideMenuList button");
+sideMenuList.forEach((list) =>
+  list.addEventListener("click", (event) => getNewsByTopic(event))
+);
+
+let searchButton = document.getElementById("searchButton");
+
 const getNews = async () => {
   let url = new URL(
     `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=10`
@@ -13,14 +20,13 @@ const getNews = async () => {
   });
   let response = await fetch(url, { headers: header });
   let data = await response.json();
-  news = data.articles; // 우리가 보여주려는 데이터는 articles에 있음
+  news = data.articles;
   console.log("뉴스", news);
   render();
 };
 
 const getNewsByTopic = async (event) => {
-  console.log("클릭됨", event.target.textContent);
-
+  console.log("클릭", event.target.textContent);
   let topic = event.target.textContent.toLowerCase();
   let url = new URL(
     `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
@@ -35,17 +41,32 @@ const getNewsByTopic = async (event) => {
   render();
 };
 
+const getNewsByKeyword = async () => {
+  let searchInput = document.getElementById("searchInput").value;
+  let url = new URL(
+    `https://api.newscatcherapi.com/v2/search?q=${searchInput}&from='2022/08/09'&countries=KR&page_size=10`
+  );
+  let header = new Headers({
+    "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
+  });
+  let response = await fetch(url, { headers: header });
+  let data = await response.json();
+  news = data.articles;
+  render();
+};
+
 const render = () => {
   let newsHTML = "";
-  newsHTML = news //news array
+  newsHTML = news
     .map((item) => {
       return `<div class="row news">
     <div class="col-lg-4">
       <img
         class="newsImgSize"
         src="${
-          item.media ||
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1280px-No_image_3x4.svg.png"
+          item.media == null || ""
+            ? "https://images.assetsdelivery.com/compings_v2/yehorlisnyi/yehorlisnyi2104/yehorlisnyi210400016.jpg"
+            : item.media
         }"
       / alt="image">
     </div>
@@ -54,13 +75,11 @@ const render = () => {
       <p>${
         item.summary == null || item.summary == ""
           ? "내용없음"
-          : item.summary.length > 200
-          ? item.summary.substring(0, 200) + "..."
-          : item.summary
+          : item.summary < 200
+          ? item.summary
+          : item.summary + "..."
       }</p>
-      <div>${moment(item.published_date).fromNow()} * ${
-        item.rights || "no source"
-      }</div>
+      <div>${moment(item.published_date).fromNow()} * ${item.rights}</div>
     </div>
   </div>
 `;
@@ -87,4 +106,5 @@ const openSearchBox = () => {
   }
 };
 
+searchButton.addEventListener("click", getNewsByKeyword);
 getNews();
