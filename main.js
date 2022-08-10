@@ -14,14 +14,27 @@ let searchButton = document.getElementById("searchButton");
 let url;
 
 const duplicate = async () => {
-  let header = new Headers({
-    "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
-  });
-  let response = await fetch(url, { headers: header });
-  let data = await response.json();
-  news = data.articles;
+  try {
+    let header = new Headers({
+      "x-api-key": "2_bme4VNvXUDBs3HXySsHJcE_KN42OI-6TW0pyubmZk",
+    });
 
-  render();
+    let response = await fetch(url, { headers: header });
+    let data = await response.json();
+    //에러 발생하면 response.status에 에러코드, data.message로 에러 확인 가능함.
+    if (response.status == 200) {
+      if (data.total_hits == 0) {
+        throw new Error("검색된 결과값이 없습니다.");
+      }
+      news = data.articles;
+      console.log(news);
+      render();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    errorRender(error.message);
+  }
 };
 
 const getNews = async () => {
@@ -96,6 +109,14 @@ const openSearchBox = () => {
   } else {
     inputArea.style.display = "inline";
   }
+};
+
+//에러 HTML 보여주는 함수
+const errorRender = (message) => {
+  let errorHTML = `<div class="alert alert-warning text-center" role="alert">
+ ${message}
+</div>`;
+  document.getElementById("newsBoard").innerHTML = errorHTML;
 };
 
 searchButton.addEventListener("click", getNewsByKeyword);
