@@ -11,48 +11,40 @@ sideMenuList.forEach((list) =>
 
 let searchButton = document.getElementById("searchButton");
 
-const getNews = async () => {
-  let url = new URL(
-    `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=10`
-  );
+let url;
+
+const duplicate = async () => {
   let header = new Headers({
     "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
   });
   let response = await fetch(url, { headers: header });
   let data = await response.json();
   news = data.articles;
-  console.log("뉴스", news);
+
   render();
 };
 
+const getNews = async () => {
+  url = new URL(
+    `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=10`
+  );
+  duplicate();
+};
+
 const getNewsByTopic = async (event) => {
-  console.log("클릭", event.target.textContent);
   let topic = event.target.textContent.toLowerCase();
-  let url = new URL(
+  url = new URL(
     `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
   );
-  let header = new Headers({
-    "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
-  });
-  let response = await fetch(url, { headers: header });
-  let data = await response.json();
-  news = data.articles;
-  console.log("data", news);
-  render();
+  duplicate();
 };
 
 const getNewsByKeyword = async () => {
   let searchInput = document.getElementById("searchInput").value;
-  let url = new URL(
+  url = new URL(
     `https://api.newscatcherapi.com/v2/search?q=${searchInput}&from='2022/08/09'&countries=KR&page_size=10`
   );
-  let header = new Headers({
-    "x-api-key": "kea8lyj_sWmvtQq7540wXqaR7QmGH3j7qTJ5PO5mrz8",
-  });
-  let response = await fetch(url, { headers: header });
-  let data = await response.json();
-  news = data.articles;
-  render();
+  duplicate();
 };
 
 const render = () => {
@@ -75,9 +67,9 @@ const render = () => {
       <p>${
         item.summary == null || item.summary == ""
           ? "내용없음"
-          : item.summary < 200
-          ? item.summary
-          : item.summary + "..."
+          : item.summary.length > 200
+          ? item.summary.substring(0, 350) + "..."
+          : item.summary
       }</p>
       <div>${moment(item.published_date).fromNow()} * ${item.rights}</div>
     </div>
