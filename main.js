@@ -1,4 +1,7 @@
 let news = []; //articles 뽑아내기 위한 배열
+let page = 1;
+let total_pages = 0;
+
 let menus = document.querySelectorAll(".menus button");
 menus.forEach((menu) =>
   menu.addEventListener("click", (event) => getNewsByTopic(event))
@@ -19,16 +22,22 @@ const duplicate = async () => {
       "x-api-key": "2_bme4VNvXUDBs3HXySsHJcE_KN42OI-6TW0pyubmZk",
     });
 
+    url.searchParams.set("page", page); // page query 더함
+
     let response = await fetch(url, { headers: header });
     let data = await response.json();
+    console.log("data뭐임", data);
     //에러 발생하면 response.status에 에러코드, data.message로 에러 확인 가능함.
     if (response.status == 200) {
       if (data.total_hits == 0) {
         throw new Error("검색된 결과값이 없습니다.");
       }
       news = data.articles;
+      total_pages = data.total_pages;
+      page = data.page;
       console.log(news);
       render();
+      pagination();
     } else {
       throw new Error(data.message);
     }
@@ -117,6 +126,52 @@ const errorRender = (message) => {
  ${message}
 </div>`;
   document.getElementById("newsBoard").innerHTML = errorHTML;
+};
+
+//페이지네이션=> duplicate()의 render 함수 이후에 불러줌
+const pagination = () => {
+  let paginationHTML = ``;
+  let pageGroup = Math.ceil(page / 5);
+  let last = pageGroup * 5;
+  if (last > total_pages) {
+    last = total_pages;
+  }
+  let first = last - 4 <= 0 ? 1 : last - 4;
+
+  if (first >= 6) {
+    paginationHTML = `<li class="page-item">
+  <a class="page-link" href="#" aria-label="Previous" onclick="moveToPage(${
+    page - 1
+  })">
+    <span aria-hidden="true">&lt;</span>
+  </a>
+</li>     <li class="page-item">
+<a class="page-link" href="#" aria-label="Previous" onclick="moveToPage(1)">
+  <span aria-hidden="true">&lt&lt;</span>
+</a>
+</li>`;
+  }
+
+  for (let i = first; i <= last; i++) {
+    paginationHTML += `<li class="page-item ${
+      page === i ? "active" : ""
+    }"><a class="page-link" href="#" id='page-${i}' onclick="moveToPage(${i})">${i}</a></li>
+    `;
+  }
+  if (last < total_pages) {
+    paginationHTML += `<li class="page-item" onclick="moveToPage(${page + 1})">
+  <a  class="page-link" href='#'>&gt;</a>
+ </li> <li class="page-item" onclick="moveToPage(${total_pages})">
+ <a  class="page-link" href='#'>&gt&gt;</a>
+</li>`;
+  }
+
+  document.querySelector(".pagination").innerHTML = paginationHTML;
+};
+
+const moveToPage = (pageNum) => {
+  page = pageNum;
+  duplicate();
 };
 
 searchButton.addEventListener("click", getNewsByKeyword);

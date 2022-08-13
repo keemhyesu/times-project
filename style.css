@@ -100,3 +100,7 @@
   background: none;
   border: 2px solid lightgray;
 }
+
+.pagination {
+  margin-top: 20px;
+}
